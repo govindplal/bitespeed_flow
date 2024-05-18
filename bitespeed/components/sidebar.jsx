@@ -27,6 +27,7 @@ const Sidebar = ({
                     className="block w-full pt-2 px-3 pb-3 text-blue-700 border border-blue-700 rounded-lg bg-white focus:outline-none focus:border-gray-500"
                     value={nodeText}
                     onChange={handleInputChange}
+                    autoFocus
                   />
                 </div>
               <button

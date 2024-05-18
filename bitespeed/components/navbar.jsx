@@ -1,9 +1,14 @@
 import { Button } from './ui/button'
 
-const Navbar = () => {
+const Navbar = ({saveFlow}) => {
   return (
     <div className='flex w-full py-2 px-[3vw] bg-slate-200 justify-end'>
-        <Button variant = "outline">Save changes</Button>
+        <button
+        variant = "outline" 
+        onClick ={saveFlow}
+        >
+            Save changes
+        </button>
     </div>
   )
 }

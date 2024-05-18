@@ -9,6 +9,9 @@ import 'reactflow/dist/style.css';
 let id = 0;
 const getId = () => `node_${id++}`;
 
+// Key for local storage
+const flowKey = "flow-key";
+
 export default function Home() {
 
 
@@ -57,9 +60,9 @@ export default function Home() {
       }))
     );
   }, []);
-
+ 
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
+    (params) => setEdges((eds) => addEdge({ ...params,markerEnd: { type: 'arrowclosed' } }, eds)),
     [],
   );
 
@@ -87,7 +90,7 @@ export default function Home() {
         id: getId(),
         type,
         position,
-        data: { label: `${type} node` },
+        data: { text: `test message ${id}` },
       };
 
       setNodes((nds) => nds.concat(newNode));
@@ -95,9 +98,47 @@ export default function Home() {
     [reactFlowInstance],
   );
 
+    // Check for empty target handles
+    const checkEmptyTargetHandles = () => {
+      let emptyTargetHandles = 0;
+      edges.forEach((edge) => {
+        if (!edge.targetHandle) {
+          emptyTargetHandles++;
+        }
+      });
+      return emptyTargetHandles;
+    };
+
+    // Check if any node is unconnected
+  const isNodeUnconnected = useCallback(() => {
+    let unconnectedNodes = nodes.filter(
+      (node) =>
+        !edges.find(
+          (edge) => edge.source === node.id || edge.target === node.id
+        )
+    );
+    return unconnectedNodes.length > 0;
+  }, [nodes, edges]);
+
+    // Save flow to local storage
+    const saveFlow = useCallback(() => {
+      if (reactFlowInstance) {
+        const emptyTargetHandles = checkEmptyTargetHandles();
+        if (nodes.length > 1 && (emptyTargetHandles > 1 || isNodeUnconnected())) {
+          alert(
+            "Error: More than one node has an empty target handle or there are unconnected nodes."
+          );
+        } else {
+          const flow = reactFlowInstance.toObject();
+          localStorage.setItem(flowKey, JSON.stringify(flow));
+          alert("Save successful!"); // Provide feedback when save is successful
+        }
+      }
+    }, [reactFlowInstance, nodes, isNodeUnconnected]);
+
   return (
     <div className="flex flex-col gap-0">
-      <Navbar/>
+      <Navbar saveFlow={saveFlow}/>
     <div className="flex flex-row w-screen h-screen" ref={reactFlowWrapper}>
           <ReactFlow
             nodes={nodes}
@@ -110,6 +151,15 @@ export default function Home() {
           onDrop={onDrop}
           onDragOver={onDragOver}
           onNodeClick={onNodeClick}
+          onPaneClick={() => {
+            setSelectedElements([]); // Reset selected elements when clicking on pane
+            setNodes((nodes) =>
+              nodes.map((n) => ({
+                ...n,
+                selected: false, // Reset selected state of nodes when clicking on pane
+              }))
+            );
+          }}
           fitView
           >
             <Background/>
