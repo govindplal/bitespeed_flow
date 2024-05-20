@@ -3,7 +3,7 @@ import Navbar from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
 import TextNode from "@/components/textnode";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import ReactFlow, { addEdge, Background, Controls, useEdgesState, useNodesState } from "reactflow";
+import ReactFlow, { addEdge, Background, Controls, updateEdge, useEdgesState, useNodesState } from "reactflow";
 import 'reactflow/dist/style.css';
 
 let id = 0;
@@ -60,7 +60,12 @@ export default function Home() {
       }))
     );
   }, []);
- 
+  
+  const onEdgeUpdate = useCallback(
+    (oldEdge, newConnection) => setEdges((els) => updateEdge(oldEdge, newConnection, els)),
+    []
+  );
+
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge({ ...params,markerEnd: { type: 'arrowclosed' } }, eds)),
     [],
@@ -146,6 +151,7 @@ export default function Home() {
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
+          onEdgeUpdate={onEdgeUpdate}
           onConnect={onConnect}
           onInit={setReactFlowInstance}
           onDrop={onDrop}

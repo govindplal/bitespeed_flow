@@ -36,11 +36,10 @@ const TextNode = ({ data, selected }) => {
         position={Position.Left}
         className="w-1 rounded-full bg-slate-500"
       />
-      <CustomHandle
+      <Handle
         id="b"
         type="source"
         position={Position.Right}
-        isConnectable={1}
         className="w-1 rounded-full bg-gray-500"
       />
     </div>
