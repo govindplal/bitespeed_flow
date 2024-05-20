@@ -1,20 +1,25 @@
-import { MessageSquareText } from "lucide-react";
+import { MessageSquareText, Trash2 } from "lucide-react";
 import Image from "next/image";
-import { Handle, Position } from "reactflow";
+import { Handle, NodeToolbar, Position } from "reactflow";
 import CustomHandle from "./customhandle";
+import { Button } from "./ui/button";
 
 const TextNode = ({ data, selected }) => {
   return (
+    <>
+    <NodeToolbar isVisible={data.toolbarVisible} position={data.toolbarPosition}>
+        <button className="hover:text-red-700"><Trash2 className="h-6 w-6"/></button>
+      </NodeToolbar>
     <div
-      className={`w-40  shadow-md rounded-md bg-white   ${
+      className={`w-45  shadow-md rounded-md bg-white   ${
         selected ? "border-solid border-2 border-indigo-500/100" : ""
       } `}
     >
       <div className="flex flex-col">
-        <div className=" flex flex-row gap-2 items-center max-h-max px-2 py-1 text-left text-black text-xs font-semibold rounded-t-md bg-teal-300">
+        <div className=" flex flex-row gap-1 items-center max-h-max px-2 py-1 text-left text-black font-bold rounded-t-md bg-teal-300">
         <MessageSquareText className="h-2 w-2"/>
-           Send message
-            <div className="relative w-4 h-4">
+           <div className="text-[8px]">Send Message</div>
+            <div className="relative w-3 h-3 ml-6 bg-white rounded-full">
                 <Image
                     src = "/whatsapp.webp"
                     fill
@@ -23,9 +28,9 @@ const TextNode = ({ data, selected }) => {
                     />
             </div>
         </div>
-        <div className="px-3 py-2 ">
-          <div className="text-xs font-normal text-black">
-            {data.text ?? "Text Node"}
+        <div className="px-3 py-1 ">
+          <div className="text-[8px] text-left font-normal text-black">
+            {data.text}
           </div>
         </div>
       </div>
@@ -34,15 +39,17 @@ const TextNode = ({ data, selected }) => {
         id="a"
         type="target"
         position={Position.Left}
-        className="w-1 rounded-full bg-slate-500"
+        className="w-[2px] rounded-full bg-slate-500"
       />
-      <Handle
+      <CustomHandle
         id="b"
         type="source"
         position={Position.Right}
-        className="w-1 rounded-full bg-gray-500"
+        className="w-[2px] rounded-full bg-gray-500"
+        isConnectable = {1}
       />
     </div>
+    </>
   );
 }
 
