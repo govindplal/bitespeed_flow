@@ -167,6 +167,13 @@ export default function Home() {
             );
           }}
           fitView
+          deleteKeyCode = {"Delete"}
+          panActivationKeyCode={"Space"}
+          panOnDrag = {false}
+          panOnScroll = {true}
+          selectionMode="partial"
+          selectionOnDrag = {true}
+          zoomActivationKeyCode={["Meta","Control"]}
           >
             <Background/>
             <Controls />
