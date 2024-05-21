@@ -1,14 +1,20 @@
 import { MessageSquareText, Trash2 } from "lucide-react";
 import Image from "next/image";
-import { Handle, NodeToolbar, Position } from "reactflow";
+import { Handle, NodeToolbar, Position, useNodeId, useReactFlow } from "reactflow";
 import CustomHandle from "./customhandle";
-import { Button } from "./ui/button";
+import { useCallback } from "react";
 
-const TextNode = ({ data, selected }) => {
+const TextNode = ({ data, selected}) => {
+    const id = useNodeId();
+    const {setNodes, setEdges} = useReactFlow();
+    const deleteNode = useCallback(() => {
+        setNodes((nodes) => nodes.filter((node) => node.id !== id));
+        setEdges((edges) => edges.filter((edge) => edge.source !== id));
+      }, [id, setNodes, setEdges]);
   return (
     <>
-    <NodeToolbar isVisible={data.toolbarVisible} position={data.toolbarPosition}>
-        <button className="hover:text-red-700"><Trash2 className="h-6 w-6"/></button>
+    <NodeToolbar>
+        <button className="hover:text-red-700" onClick={() => deleteNode()}><Trash2 className="h-6 w-6"/></button>
       </NodeToolbar>
     <div
       className={`w-45  shadow-md rounded-md bg-white   ${
@@ -41,12 +47,11 @@ const TextNode = ({ data, selected }) => {
         position={Position.Left}
         className="w-[2px] rounded-full bg-slate-500"
       />
-      <CustomHandle
+      <Handle
         id="b"
         type="source"
         position={Position.Right}
         className="w-[2px] rounded-full bg-gray-500"
-        isConnectable = {1}
       />
     </div>
     </>
