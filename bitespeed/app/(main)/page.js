@@ -3,7 +3,7 @@ import Navbar from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
 import TextNode from "@/components/textnode";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import ReactFlow, { addEdge, Background, Controls, updateEdge, useEdgesState, useNodesState } from "reactflow";
+import ReactFlow, { addEdge, Background, Controls, updateEdge, useEdgesState, useNodesState, useReactFlow } from "reactflow";
 import 'reactflow/dist/style.css';
 
 let id = 0;
@@ -65,9 +65,20 @@ export default function Home() {
     (oldEdge, newConnection) => setEdges((els) => updateEdge(oldEdge, newConnection, els)),
     []
   );
+  const reactflow = useReactFlow();
 
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge({ ...params,markerEnd: { type: 'arrowclosed' } }, eds)),
+    (params) => {
+      // Get the source handle id
+  const sourceHandleId = params.sourceHandle;
+  
+  const edges =reactflow.getEdges();
+  // Get the edges connected to this source handle
+  const connectedEdges = edges.filter(edge => edge.sourceHandle === sourceHandleId);
+  // Only add the edge if there are no edges connected to this source handle
+  if (connectedEdges.length === 0) {
+      setEdges((eds) => addEdge({ ...params,markerEnd: { type: 'arrowclosed' } }, eds))}
+    },
     [],
   );
 
@@ -158,6 +169,15 @@ export default function Home() {
           onDragOver={onDragOver}
           onNodeClick={onNodeClick}
           onPaneClick={() => {
+            setSelectedElements([]); // Reset selected elements when clicking on pane
+            setNodes((nodes) =>
+              nodes.map((n) => ({
+                ...n,
+                selected: false, // Reset selected state of nodes when clicking on pane
+              }))
+            );
+          }}
+          onNodesDelete={() => {
             setSelectedElements([]); // Reset selected elements when clicking on pane
             setNodes((nodes) =>
               nodes.map((n) => ({

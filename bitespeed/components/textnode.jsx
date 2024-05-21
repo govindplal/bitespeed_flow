@@ -1,16 +1,15 @@
 import { MessageSquareText, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { Handle, NodeToolbar, Position, useNodeId, useReactFlow } from "reactflow";
-import CustomHandle from "./customhandle";
 import { useCallback } from "react";
 
 const TextNode = ({ data, selected}) => {
+  const reactflow = useReactFlow();
     const id = useNodeId();
-    const {setNodes, setEdges} = useReactFlow();
     const deleteNode = useCallback(() => {
-        setNodes((nodes) => nodes.filter((node) => node.id !== id));
-        setEdges((edges) => edges.filter((edge) => edge.source !== id));
-      }, [id, setNodes, setEdges]);
+        reactflow.setNodes((nodes) => nodes.filter((node) => node.id !== id));
+        reactflow.setEdges((edges) => edges.filter((edge) => edge.source !== id));
+      }, [id, reactflow.setNodes, reactflow.setEdges]);
   return (
     <>
     <NodeToolbar>
@@ -48,7 +47,7 @@ const TextNode = ({ data, selected}) => {
         className="w-[2px] rounded-full bg-slate-500"
       />
       <Handle
-        id="b"
+        id= {`b_${id}`}
         type="source"
         position={Position.Right}
         className="w-[2px] rounded-full bg-gray-500"
