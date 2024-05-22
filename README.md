@@ -1,5 +1,5 @@
-# bitespeed_flow
-Live demo :[bitespeed flow builder](https://bitespeed-flow-bg1y.vercel.app/)
+# Drag nd Drop Chatbot Flow Builder
+Live demo :[Drag and drop chatbot flow builder](https://bitespeed-flow-bg1y.vercel.app/)
 ## Tech Stack:
 - Next.js
 - React Flow
