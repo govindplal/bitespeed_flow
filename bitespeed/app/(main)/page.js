@@ -3,6 +3,7 @@ import Navbar from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
 import TextNode from "@/components/textnode";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import ReactFlow, { addEdge, Background, Controls, updateEdge, useEdgesState, useNodesState, useReactFlow } from "reactflow";
 import 'reactflow/dist/style.css';
 
@@ -13,7 +14,6 @@ const getId = () => `node_${id++}`;
 const flowKey = "flow-key";
 
 export default function Home() {
-
   const edgeUpdateSuccessful = useRef(true);
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
@@ -153,13 +153,27 @@ export default function Home() {
       if (reactFlowInstance) {
         const emptyTargetHandles = checkEmptyTargetHandles();
         if (nodes.length > 1 && (emptyTargetHandles > 1 || isNodeUnconnected())) {
-          alert(
-            "Error: More than one node has an empty target handle or there are unconnected nodes."
-          );
+          toast.error( "Uh oh! Something went wrong.",
+            { classNames: {
+              toast: 'bg-red-500',
+              title: 'text-white text-md font-bold',
+              description: 'text-white text-xs',
+            },
+              description: "More than one node has an empty target handle or there are unconnected nodes",
+              position: 'top-center',
+              icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffffff" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm0-384c13.3 0 24 10.7 24 24V264c0 13.3-10.7 24-24 24s-24-10.7-24-24V152c0-13.3 10.7-24 24-24zM224 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"/></svg>
+          }); // Provide feedback when save is successful
         } else {
           const flow = reactFlowInstance.toObject();
           localStorage.setItem(flowKey, JSON.stringify(flow));
-          alert("Save successful!"); // Provide feedback when save is successful
+          toast.success("Save successful!", 
+          { classNames: {
+            toast: 'bg-green-500 w-40 h-auto',
+            title: 'text-white text-md font-bold',
+          },
+            position: 'top-center',
+            icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffffff" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></svg>
+          }); // Provide feedback when save is successful
         }
       }
     }, [reactFlowInstance, nodes, isNodeUnconnected]);
