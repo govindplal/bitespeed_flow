@@ -1,20 +1,11 @@
 import { MessageSquareText, Trash2 } from "lucide-react";
 import Image from "next/image";
-import { Handle, NodeToolbar, Position, useNodeId, useReactFlow } from "reactflow";
-import { useCallback } from "react";
+import { Handle, Position, useNodeId } from "reactflow";
 
 const TextNode = ({ data, selected}) => {
-  const reactflow = useReactFlow();
     const id = useNodeId();
-    const deleteNode = useCallback(() => {
-        reactflow.setNodes((nodes) => nodes.filter((node) => node.id !== id));
-        reactflow.setEdges((edges) => edges.filter((edge) => edge.source !== id));
-      }, [id, reactflow.setNodes, reactflow.setEdges]);
   return (
     <>
-    <NodeToolbar>
-        <button className="hover:text-red-700" onClick={() => deleteNode()}><Trash2 className="h-6 w-6"/></button>
-      </NodeToolbar>
     <div
       className={`w-45  shadow-md rounded-md bg-white   ${
         selected ? "border-solid border-2 border-indigo-500/100" : ""

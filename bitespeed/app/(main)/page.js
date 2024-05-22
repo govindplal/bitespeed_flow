@@ -14,7 +14,7 @@ const flowKey = "flow-key";
 
 export default function Home() {
 
-
+  const edgeUpdateSuccessful = useRef(true);
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -60,11 +60,23 @@ export default function Home() {
       }))
     );
   }, []);
-  
-  const onEdgeUpdate = useCallback(
-    (oldEdge, newConnection) => setEdges((els) => updateEdge(oldEdge, newConnection, els)),
-    []
-  );
+  const onEdgeUpdateStart = useCallback(() => {
+    edgeUpdateSuccessful.current = false;
+  }, []);
+
+  const onEdgeUpdate = useCallback((oldEdge, newConnection) => {
+    edgeUpdateSuccessful.current = true;
+    setEdges((els) => updateEdge(oldEdge, newConnection, els));
+  }, []);
+
+  const onEdgeUpdateEnd = useCallback((_, edge) => {
+    if (!edgeUpdateSuccessful.current) {
+      setEdges((eds) => eds.filter((e) => e.id !== edge.id));
+    }
+
+    edgeUpdateSuccessful.current = true;
+  }, []);
+
   const reactflow = useReactFlow();
 
   const onConnect = useCallback(
@@ -163,6 +175,8 @@ export default function Home() {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onEdgeUpdate={onEdgeUpdate}
+          onEdgeUpdateStart={onEdgeUpdateStart}
+          onEdgeUpdateEnd={onEdgeUpdateEnd}
           onConnect={onConnect}
           onInit={setReactFlowInstance}
           onDrop={onDrop}
